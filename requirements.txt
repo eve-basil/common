@@ -1,0 +1,3 @@
+# Base requirements
+falcon==0.3.0
+SQLAlchemy==1.0.10
