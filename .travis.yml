@@ -12,7 +12,7 @@ install:
   - 'pip install -r test-requirements.txt'
 
 script:
-  - 'flake8 basil_comomon'
+  - 'flake8 basil_common'
   - 'py.test tests'
 
 env:
