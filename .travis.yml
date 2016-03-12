@@ -1,0 +1,32 @@
+language: python
+
+services:
+  - redis-server
+
+cache:
+  directories:
+  - $HOME/.cache/pip
+
+install:
+  - 'pip install -r requirements.txt'
+  - 'pip install -r test-requirements.txt'
+
+script:
+  - 'flake8 basil_comomon'
+  - 'py.test tests'
+
+env:
+  global:
+    - REDIS_HOST=localhost
+
+matrix:
+  include:
+    - python: '2.7'
+
+notifications:
+  email: false
+
+git:
+  depth: 3
+
+sudo: false
