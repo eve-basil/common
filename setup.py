@@ -6,5 +6,5 @@ setup(
     packages=find_packages(),
 
     description="Junk drawer of commonly needed functionality for Eve Basil.",
-    install_requires=["SQLAlchemy==1.0.10", "falcon==0.3.0"],
+    install_requires=["falcon==0.3.0", "redis==2.10.5", "SQLAlchemy==1.0.10"],
 )
