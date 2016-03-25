@@ -12,7 +12,7 @@ install:
   - 'pip install -r test-requirements.txt'
 
 script:
-  - 'flake8 basil_common'
+  - 'flake8 --ignore=F403 .'
   - 'py.test tests'
 
 env:
