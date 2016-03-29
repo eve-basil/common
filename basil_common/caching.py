@@ -7,7 +7,12 @@ def bootstrap_cache(host='127.0.0.1', password=None):
     pool = redis.ConnectionPool(host=host, password=password)
     return redis.StrictRedis(connection_pool=pool)
 
-ENGINE = None
+
+def connect_to_cache():
+    import os
+    cache_host = os.environ['REDIS_HOST']
+    cache_password = os.environ.get('REDIS_PASSWORD', None)
+    return bootstrap_cache(cache_host, cache_password)
 
 
 class FactCache(object):
