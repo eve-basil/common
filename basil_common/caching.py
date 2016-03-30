@@ -1,3 +1,4 @@
+import json
 import threading
 
 import redis
@@ -16,38 +17,47 @@ def connect_to_cache():
 
 
 class FactCache(object):
+    IS_JSON = '::^JSON^::'
 
-    def __init__(self, redis_conn, prefix, timeout_seconds=3600, loader=None):
+    def __init__(self, redis_conn, prefix, timeout_seconds=3600, loader=None,
+                 preload=False):
         self._redis = redis_conn
         self._prefix = prefix
         self.timeout_seconds = timeout_seconds
         self._loader = loader or self.noop
         self._load_lock = threading.BoundedSemaphore()
-        self._load_in_background()
+        if redis_conn and preload:
+            self._load_in_background()
 
     @property
     def is_available(self):
         return self._redis.ping()
 
     def get(self, key):
-        found = self._redis.get(self._prefix + key)
+        found = self._redis.get(self._prefix + str(key))
         if not found:
             payload = self._load_in_background()
             found = payload[key]
+        if found.startswith(self.IS_JSON):
+            found = json.loads(found[10:])
         return found
 
     def set(self, key, value):
-        return self._redis.setex(name=self._prefix + key, value=value,
+        if not isinstance(value, str):
+            value = self.IS_JSON + json.dumps(value)
+        return self._redis.setex(name=self._prefix + str(key), value=value,
                                  time=self.timeout_seconds)
 
     def load(self, payload):
         self._load(payload, locked=False)
 
     def _load(self, payload, locked):
-        for key in payload:
-            self.set(key, payload[key])
-        if locked:
-            self._load_lock.release()
+        try:
+            for key in payload:
+                self.set(key, payload[key])
+        finally:
+            if locked:
+                self._load_lock.release()
 
     def _load_in_background(self):
         self._load_lock.acquire()
