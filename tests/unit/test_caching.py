@@ -81,31 +81,3 @@ class TestFactCache(object):
         # wait for loading to be complete
         with cache._load_lock:
             pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

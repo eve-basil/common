@@ -37,8 +37,9 @@ class FactCache(object):
         found = self._redis.get(self._prefix + str(key))
         if not found:
             payload = self._load_in_background()
+            # TODO figure out the bug here when cache misses
             found = payload[key]
-        if found.startswith(self.IS_JSON):
+        if isinstance(found, str) and found.startswith(self.IS_JSON):
             found = json.loads(found[10:])
         return found
 
