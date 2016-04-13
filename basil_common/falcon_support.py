@@ -4,6 +4,8 @@ import falcon
 
 
 class InjectorMiddleware:
+    """Injects all arguments into each Falcon session
+    """
     def __init__(self, args):
         self._injectables = args
 
@@ -12,6 +14,14 @@ class InjectorMiddleware:
 
 
 def prod_handler(ex, req, resp, params):
+    """Handle exceptions thrown during request processing
+
+    :param ex: exception to optionally handle
+    :param req: request being processed
+    :param resp: response being formulated
+    :param params: parameters to the request
+    :return: None
+    """
     # Pass on any HTTP Error that has already been determined
     if isinstance(ex, falcon.HTTPError):
         raise ex
@@ -21,6 +31,14 @@ def prod_handler(ex, req, resp, params):
 
 
 def dev_handler(ex, req, resp, params):
+    """Handle exceptions thrown during request processing
+
+    :param ex: exception to optionally handle
+    :param req: request being processed
+    :param resp: response being formulated
+    :param params: parameters to the request
+    :return: None
+    """
     # Pass on any HTTP Error that has already been determined
     if isinstance(ex, falcon.HTTPError):
         raise ex
@@ -30,7 +48,7 @@ def dev_handler(ex, req, resp, params):
     import traceback
     trace = traceback.format_exc()
 
-    if req.client_accepts('trext/html'):
+    if req.client_accepts('text/html'):
         resp.content_type = 'text/html'
         content = ('<!DOCTYPE html><h2>%s</h2>%s<hr><pre>%s</pre>'
                    % (resp.status, ex.message, trace))
