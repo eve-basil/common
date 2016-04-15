@@ -1,8 +1,12 @@
 import json
+import logging
 import threading
 
 import redis
 import time
+
+
+LOG = logging.getLogger(__name__)
 
 
 def bootstrap_cache(host='127.0.0.1', password=None):
@@ -21,13 +25,15 @@ class FactCache(object):
     IS_JSON = 'JSON::'
 
     def __init__(self, redis_conn, prefix, timeout_seconds=3600, loader=None,
-                 preload=False):
+                 preload=False, debug=False):
         self._redis = redis_conn
         self._prefix = prefix
         self.timeout_seconds = timeout_seconds
         self._loader = loader or self.noop
         self._load_op = None
         self._loading_lock = threading.BoundedSemaphore()
+        self._debug = debug
+
         if redis_conn and preload:
             self.get('')
 
@@ -57,9 +63,14 @@ class FactCache(object):
         compound_key = self._compound_key(key)
         found = self._redis.get(compound_key)
         if found:
+            if self._debug:
+                LOG.info('Cache Hit [%s] for key [%s]', self._prefix, key)
             return self._unpickle(found)
 
+        if self._debug:
+            LOG.info('Cache Miss [%s] for key [%s]', self._prefix, key)
         found = self._locked_get(key)
+
         if blocking:
             self._wait_for_loading_op()
             return self.get(key)
