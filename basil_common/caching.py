@@ -51,6 +51,9 @@ class FactCache(object):
             if acquired_lock:
                 self._loading_lock.release()
 
+    def __setitem__(self, key, value):
+        self.set(key, value)
+
     def set(self, key, value):
         cache_key = self._compound_key(key)
         value = self._pickle(value)
@@ -76,6 +79,9 @@ class FactCache(object):
             return self.get(key)
         else:
             return found
+
+    def __getitem__(self, item):
+        return self.get(item)
 
     def _compound_key(self, key):
         return self._prefix + str(key)

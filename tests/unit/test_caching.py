@@ -11,7 +11,7 @@ class TestFactCache(object):
             engine.get.return_value = 'hit'
             self._wait_until_loaded(cache)
             engine.reset_mock()
-            assert_that(cache.get('7'), equal_to('hit'))
+            assert_that(cache['7'], equal_to('hit'))
             assert_that(engine.setex.call_count, equal_to(0))
 
     def test_get_miss_causes_load(self, mocker):
@@ -21,7 +21,7 @@ class TestFactCache(object):
             self._wait_until_loaded(cache)
             engine.reset_mock()
             # Cache returns data from the loader, so we don't have to wait
-            assert_that(cache.get('7'), equal_to('is 7'))
+            assert_that(cache['7'], equal_to('is 7'))
             # Meanwhile the background loading is still running
             self._wait_until_loaded(cache)
             assert_that(engine.setex.call_count, equal_to(20))
@@ -29,7 +29,7 @@ class TestFactCache(object):
     def test_set(self, mocker):
         with mocker.patch('redis.StrictRedis') as engine:
             cache = self._cache_with_mock_engine(engine, preload=False)
-            cache.set('7', 'is set')
+            cache['7'] = 'is set'
             assert_that(engine.setex.call_count, equal_to(1))
             engine.setex.assert_called_once_with('test_7', 3600, 'is set')
 
