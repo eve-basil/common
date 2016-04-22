@@ -29,7 +29,8 @@ def is_cacheable(status):
     return code in [200, 203, 206, 300, 301, 410]
 
 
-def respond(resp, method='GET', status=falcon.HTTP_200, headers=None, body=None):
+def respond(resp, method='GET', status=falcon.HTTP_200, headers=None,
+            body=None):
     resp.status = status
     if headers:
         for key, value in headers.iteritems():
