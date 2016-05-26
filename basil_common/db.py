@@ -48,7 +48,7 @@ class SessionManager:
 
 def prepare_storage(connect_str, conn_timeout, scoped=False):
     engine = prepare_storage_engine(conn_timeout, connect_str)
-    return prepare_storage_for_engine(engine)
+    return prepare_storage_for_engine(engine, scoped)
 
 
 def prepare_storage_engine(conn_timeout, connect_str):
@@ -56,12 +56,13 @@ def prepare_storage_engine(conn_timeout, connect_str):
     return engine
 
 
-def prepare_storage_for_engine(engine):
+def prepare_storage_for_engine(engine, scoped=False):
     session_maker = sessionmaker(bind=engine)
     if scoped:
         return scoping.scoped_session(session_maker)
     else:
         return session_maker
+
 
 def rollback_on_exception(app):
     """Falcon Error Handler to Rollback the transaction in a current session.
