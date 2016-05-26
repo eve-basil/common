@@ -47,12 +47,17 @@ class SessionManager:
 
 
 def prepare_storage(connect_str, conn_timeout, scoped=False):
-    engine = create_engine(connect_str, pool_recycle=conn_timeout)
+    engine = prepare_storage_engine(conn_timeout, connect_str)
     session_maker = sessionmaker(bind=engine)
     if scoped:
         return scoping.scoped_session(session_maker)
     else:
         return session_maker
+
+
+def prepare_storage_engine(conn_timeout, connect_str):
+    engine = create_engine(connect_str, pool_recycle=conn_timeout)
+    return engine
 
 
 def rollback_on_exception(app):
