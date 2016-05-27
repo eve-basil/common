@@ -46,12 +46,12 @@ class SessionManager:
         return resp_status not in [201, 202, 204]
 
 
-def prepare_storage(connect_str, conn_timeout, scoped=False):
-    engine = prepare_storage_engine(conn_timeout, connect_str)
+def prepare_storage(connect_str, conn_timeout=3600, scoped=False):
+    engine = prepare_storage_engine(connect_str, conn_timeout)
     return prepare_storage_for_engine(engine, scoped)
 
 
-def prepare_storage_engine(conn_timeout, connect_str):
+def prepare_storage_engine(connect_str, conn_timeout=3600):
     engine = create_engine(connect_str, pool_recycle=conn_timeout)
     return engine
 
